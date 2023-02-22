@@ -17,7 +17,9 @@ const panelDefaults = {
   start: 0,
   step: '',
   unit: 'm/s',
-  scale: 'absolute'
+  scale: 'absolute',
+  showScale: "1",
+  showLegend: "1"
 };
 
 class WindroseCtrl extends MetricsPanelCtrl {
@@ -261,7 +263,17 @@ class WindroseCtrl extends MetricsPanelCtrl {
           height = node.offsetHeight;
     svg.attr('width', width).attr('height', height); // Set width and height
     const g = svg.append("g"); // Add <g>
-    g.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); // Center <g>
+    console.log("width: "+width);
+    console.log("height: "+height);    
+    console.log("ratio: "+(width/height));
+    const ratio = (width/height);
+    const isExtraHigh = ratio<1.25;
+    const isHigh = !isExtraHigh&&(ratio<1.45);
+    let transWidth = width/3;
+    if(isHigh) transWidth = width/2.5;
+    if(isExtraHigh) transWidth = width/2.25;
+    //const transWidth = ((width/height)<1.45) ? (width/2.5):(width/3);
+    g.attr("transform", "translate(" + transWidth + "," + height / 2 + ")"); // Center <g>
 
     // Radius
     const margin = {top: 40, right: 80, bottom: 40, left: 40},
@@ -335,7 +347,7 @@ class WindroseCtrl extends MetricsPanelCtrl {
         .attr("transform", d => `rotate(${90-d})`)
         .attr('fill', 'white')
         .text(d => panel.x_grid == 'compass' ? degrees2compass[d] || d: d)
-        .style("font-size", '14px');
+        .style("font-size", '12px');
 
     const radius = d3.scaleLinear([0, d3.max(gridX, d => d.y0 + d.y)], yRange);
     g.selectAll(".axis")
@@ -360,37 +372,41 @@ class WindroseCtrl extends MetricsPanelCtrl {
         .attr("r", getRadius);
 
     // Y axis: labels
-    yTick.append("text")
-        .attr("y", d => -getRadius(d))
-        .attr("dy", "-0.35em")
-        .attr("x", () => -10)
-        .text(getRadius.tickFormat(5, panel.scale == 'percent' ? "%" : "s"))
-        .attr('fill', 'white')
-        .style("font-size", '14px');
+    if(panel.showScale=="1") {
+      yTick.append("text")
+          .attr("y", d => -getRadius(d))
+          .attr("dy", "-0.35em")
+          .attr("x", () => -10)
+          .text(getRadius.tickFormat(5, panel.scale == 'percent' ? "%" : "s"))
+          .attr('fill', 'white')
+          .style("font-size", '12px');
+    }
 
     // Legend
-    var legend = g.append("g")
-        .selectAll("g")
-        .data(zLabels.slice().reverse())
-        .enter().append("g")
-        .attr("transform", function(d, i) {
-          let translate_x = outerRadius + 30;
-          let translate_y = -outerRadius + 40 + (i - zLabels.length / 2) * 20;
-          return "translate(" + translate_x + "," + translate_y + ")";
-        });
+    if(panel.showLegend=="1") {
+      var legend = g.append("g")
+          .selectAll("g")
+          .data(zLabels.slice().reverse())
+          .enter().append("g")
+          .attr("transform", function(d, i) {
+            let translate_x = outerRadius + 40;
+            let translate_y = -outerRadius + 40 + (i - zLabels.length / 2) * 20;
+            return "translate(" + translate_x + "," + translate_y + ")";
+          });
 
-    legend.append("rect")
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", getColor);
+      legend.append("rect")
+          .attr("width", 18)
+          .attr("height", 18)
+          .attr("fill", getColor);
 
-    legend.append("text")
-        .attr("x", 24)
-        .attr("y", 9)
-        .attr("dy", "0.35em")
-        .text(d => d + ' ' + unit)
-        .attr('fill', 'white')
-        .style("font-size", '12px');
+      legend.append("text")
+          .attr("x", 24)
+          .attr("y", 9)
+          .attr("dy", "0.35em")
+          .text(d => d + ' ' + unit)
+          .attr('fill', 'white')
+          .style("font-size", '10px');
+    }
 
   }
 

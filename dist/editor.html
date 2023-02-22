@@ -50,7 +50,25 @@
         <option value="percent">Percent</option>
       </select>
     </div>
-
+    <div class="gf-form">
+      <label class="gf-form-label width-8">Show scale</label>
+      <select class="gf-form-input width-8" ng-change="ctrl.render()"
+              ng-model="ctrl.panel.showScale" ng-model-onblur>
+        <option value="1">On</option>
+        <option value="0">Off</option>
+      </select>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label width-8">Show legend</label>
+      <select class="gf-form-input width-8" ng-change="ctrl.render()"
+              ng-model="ctrl.panel.showLegend" ng-model-onblur>
+        <option value="1">On</option>
+        <option value="0">Off</option>
+      </select>
+    </div>
+  
   </div>
+
+
 
 </div>
