@@ -181,7 +181,15 @@ class WindroseCtrl extends MetricsPanelCtrl {
     const panel = this.panel;
     const slices = +panel.slices;
     const start = +panel.start;
-    const step = (panel.step == '') ? Math.ceil(this.speedMax / 8): +panel.step;
+    if(panel.step!='') {
+      if(Math.ceil((this.speedMax/(+panel.step))>=8)) {
+        // more than 8 speed intervals mess up the view.
+        // remove step setting so that the interval is chosen
+        // automatically.
+        panel.step = '';
+      }
+    }
+    const step = (panel.step == '') ? Math.ceil(this.speedMax / 7): +panel.step;
     const unit = panel.unit;
 
     // Intervals
