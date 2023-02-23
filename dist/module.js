@@ -6466,7 +6466,15 @@ System.register(['app/plugins/sdk'], (function (exports) {
             var panel = this.panel;
             var slices = +panel.slices;
             var start = +panel.start;
-            var step = panel.step == '' ? Math.ceil(this.speedMax / 8) : +panel.step;
+            if (panel.step != '') {
+              if (Math.ceil(this.speedMax / +panel.step >= 8)) {
+                // more than 8 speed intervals mess up the view.
+                // remove step setting so that the interval is chosen
+                // automatically.
+                panel.step = '';
+              }
+            }
+            var step = panel.step == '' ? Math.ceil(this.speedMax / 7) : +panel.step;
             var unit = panel.unit;
 
             // Intervals
