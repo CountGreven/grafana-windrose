@@ -137,9 +137,6 @@ class WindroseCtrl extends MetricsPanelCtrl {
               }
             }
 
-            console.log(dirCol);
-            console.log(speedCol);
-
             if (speedCol === null) {
               console.warn("no `speed` column in data")
               speedCol = 1
@@ -178,8 +175,22 @@ class WindroseCtrl extends MetricsPanelCtrl {
     //console.debug(this);
 
     // Data
-    const raw = this.data;
-
+    let raw = this.data;
+    let speedDef = false;
+    let angleDef = false;
+    for (let i=0; i < raw.length; i++) {
+      if(raw[i][0]) { 
+        speedDef = true; 
+      }
+      if(raw[i][1]) { 
+        angleDef = true; 
+      }
+    }
+    if(speedDef === false || angleDef === false) {
+      console.log(raw);
+      raw = Array(0);
+      console.log(raw);
+    }
     // Configuration
     const panel = this.panel;
     const slices = +panel.slices;
