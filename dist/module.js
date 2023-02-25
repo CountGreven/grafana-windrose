@@ -6401,6 +6401,8 @@ System.register(['app/plugins/sdk'], (function (exports) {
                   dirCol = i;
                 }
               }
+              console.log(dirCol);
+              console.log(speedCol);
               if (speedCol === null) {
                 console.warn("no `speed` column in data");
                 speedCol = 1;

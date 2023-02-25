@@ -137,6 +137,9 @@ class WindroseCtrl extends MetricsPanelCtrl {
               }
             }
 
+            console.log(dirCol);
+            console.log(speedCol);
+
             if (speedCol === null) {
               console.warn("no `speed` column in data")
               speedCol = 1
