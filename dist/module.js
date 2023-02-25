@@ -6448,6 +6448,10 @@ System.register(['app/plugins/sdk'], (function (exports) {
             } else {
               console.warn('unexpected data format', data);
             }
+            if (angles.length == 0 || speeds.length == 0) {
+              speeds = [];
+              angles = [];
+            }
             this.speedMax = speeds.length > 0 ? Math.max.apply(Math, _toConsumableArray(speeds)) : 0;
             this.data = zip$1(angles, speeds).filter(function (x) {
               return x[1] != null;
@@ -6461,21 +6465,6 @@ System.register(['app/plugins/sdk'], (function (exports) {
 
             // Data
             var raw = this.data;
-            var speedDef = false;
-            var angleDef = false;
-            for (var i = 0; i < raw.length; i++) {
-              if (raw[i][0]) {
-                speedDef = true;
-              }
-              if (raw[i][1]) {
-                angleDef = true;
-              }
-            }
-            if (speedDef === false || angleDef === false) {
-              console.log(raw);
-              raw = Array(0);
-              console.log(raw);
-            }
             // Configuration
             var panel = this.panel;
             var slices = +panel.slices;
@@ -6516,9 +6505,9 @@ System.register(['app/plugins/sdk'], (function (exports) {
               return Array(speedIntervals.length).fill(0);
             });
             // [angle-index][speed-index] = n
-            for (var _i = 0; _i < raw.length; _i++) {
-              var j = this.getIntervalIndex(raw[_i][0], angleIntervals, 360);
-              var k = this.getIntervalIndex(raw[_i][1], speedIntervals);
+            for (var i = 0; i < raw.length; i++) {
+              var j = this.getIntervalIndex(raw[i][0], angleIntervals, 360);
+              var k = this.getIntervalIndex(raw[i][1], speedIntervals);
               if (j != null && k != null) {
                 matrix[j][k]++;
               }
@@ -6537,14 +6526,14 @@ System.register(['app/plugins/sdk'], (function (exports) {
 
             // [{angle: angle, 0: count-0, ..., n-1: count-n-1, total: count-total} ... ]
             var data = [];
-            for (var _i2 = 0; _i2 < angleIntervals.length; _i2++) {
+            for (var _i = 0; _i < angleIntervals.length; _i++) {
               var row = {
-                angle: angleIntervals[_i2][0]
+                angle: angleIntervals[_i][0]
               };
               var total = 0;
               for (var _j = 0; _j < speedIntervals.length; _j++) {
                 var name = zLabels[_j];
-                total += row[name] = matrix[_i2][_j];
+                total += row[name] = matrix[_i][_j];
               }
               row['total'] = total;
               data.push(row);
@@ -6557,10 +6546,10 @@ System.register(['app/plugins/sdk'], (function (exports) {
                 return d.total;
               });
               var tmpScale = linear([0, max], [0, 1]);
-              for (var _i3 = 0; _i3 < data.length; _i3++) {
-                for (var key in data[_i3]) {
+              for (var _i2 = 0; _i2 < data.length; _i2++) {
+                for (var key in data[_i2]) {
                   if (key != 'angle') {
-                    data[_i3][key] = tmpScale(data[_i3][key]);
+                    data[_i2][key] = tmpScale(data[_i2][key]);
                   }
                 }
               }

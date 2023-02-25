@@ -166,6 +166,10 @@ class WindroseCtrl extends MetricsPanelCtrl {
             console.warn('unexpected data format', data);
         }
 
+        if(angles.length == 0 || speeds.length == 0) {
+          speeds = [];
+          angles = [];
+        }
         this.speedMax = speeds.length > 0 ? Math.max(...speeds) : 0;
         this.data = zip(angles, speeds).filter(x => x[1] != null);
         this.render()
@@ -175,22 +179,7 @@ class WindroseCtrl extends MetricsPanelCtrl {
     //console.debug(this);
 
     // Data
-    let raw = this.data;
-    let speedDef = false;
-    let angleDef = false;
-    for (let i=0; i < raw.length; i++) {
-      if(raw[i][0]) { 
-        speedDef = true; 
-      }
-      if(raw[i][1]) { 
-        angleDef = true; 
-      }
-    }
-    if(speedDef === false || angleDef === false) {
-      console.log(raw);
-      raw = Array(0);
-      console.log(raw);
-    }
+    const raw = this.data;
     // Configuration
     const panel = this.panel;
     const slices = +panel.slices;
